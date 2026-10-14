@@ -1,4 +1,4 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Grok Bots – Dashboard</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Grok Bots – Dashboard</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;background:#0b0e14;color:#e6e8ec}
 .top{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid #1e232d}
@@ -23,31 +23,31 @@ td .s{color:#8a93a3;font-size:12.5px}.bar{height:8px;background:#262c38;border-r
 .chart{display:flex;align-items:flex-end;gap:12px;height:170px;padding:18px}.chart div{flex:1;background:#3b5ea8;border-radius:4px 4px 0 0;position:relative}
 .chart div b{position:absolute;top:-20px;width:100%;text-align:center;font-size:12px}.chart div span{position:absolute;bottom:-20px;width:100%;text-align:center;font-size:12px;color:#8a93a3}
 </style></head><body>
-<div class="top"><h1>Grok Bots</h1><span class="ex">Prototyp mit Beispielwerten</span></div>
+<div class="top"><h1>Grok Bots</h1><span class="ex">Prototype with sample data</span></div>
 <div class="wrap">
-<div class="kpis"><div class="k"><span>Aktiv 〰</span><b id="kA"></b></div><div class="k"><span>In Warteschlange ◷</span><b id="kQ"></b></div><div class="k"><span>Heute erledigt ✓</span><b id="kD"></b></div><div class="k f"><span>Blockiert ⚠</span><b id="kB"></b></div></div>
-<div class="panel"><div class="ph"><div><h2>Laufende Bots</h2><small>Was gerade passiert, Zeile anklicken für Details</small></div>
-<div class="flt"><button class="on" data-f="all">Alle</button><button data-f="Running">Läuft</button><button data-f="Blocked">Blockiert</button><button data-f="Done">Fertig</button></div></div>
-<table><thead><tr><th>Bot</th><th>Aufgabe</th><th>Für</th><th>Fortschritt</th><th>Status</th><th>Aktualisiert</th></tr></thead><tbody id="tb"></tbody></table></div>
-<div class="two"><div class="panel"><div class="ph"><h2>Bot-Lauf im Detail</h2><small id="el"></small></div><div class="det" id="det"></div></div>
-<div class="panel"><div class="ph"><h2>Erledigte Aufgaben pro Tag</h2><small>diese Woche</small></div><div class="chart" id="ch"></div><div style="height:26px"></div><div class="sum3"><div><b style="color:#3fb950">22</b>erledigt</div><div><b style="color:#e3b341">3</b>neu versucht</div><div><b style="color:#f85149">2</b>noch offen</div></div></div></div>
+<div class="kpis"><div class="k"><span>Active 〰</span><b id="kA"></b></div><div class="k"><span>Queued ◷</span><b id="kQ"></b></div><div class="k"><span>Completed today ✓</span><b id="kD"></b></div><div class="k f"><span>Blocked ⚠</span><b id="kB"></b></div></div>
+<div class="panel"><div class="ph"><div><h2>Running Bots</h2><small>What is happening right now. Click a row for details</small></div>
+<div class="flt"><button class="on" data-f="all">All</button><button data-f="Running">Running</button><button data-f="Blocked">Blocked</button><button data-f="Done">Done</button></div></div>
+<table><thead><tr><th>Bot</th><th>Task</th><th>Owner</th><th>Progress</th><th>Status</th><th>Updated</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="two"><div class="panel"><div class="ph"><h2>Bot Run Detail</h2><small id="el"></small></div><div class="det" id="det"></div></div>
+<div class="panel"><div class="ph"><h2>Tasks Completed by Day</h2><small>this week</small></div><div class="chart" id="ch"></div><div style="height:26px"></div><div class="sum3"><div><b style="color:#3fb950">22</b>completed</div><div><b style="color:#e3b341">3</b>retried</div><div><b style="color:#f85149">2</b>still open</div></div></div></div>
 </div>
 <script>
 const B=[
-{b:"XVS Chief",t:"Herz-Video v4",s2:"Flug von außen ins Herz",p:62,st:"Running",u:"22:14",steps:["Recherche","Kamera-Flug","Rendern","Prüfen"],at:2},
-{b:"XVS Chief",t:"Bot-Dashboard",s2:"Dieser Prototyp",p:80,st:"Running",u:"22:18",steps:["Post lesen","Entwurf","Feedback","Live"],at:2},
-{b:"Viral X Posts",t:"Post zum Herz-Video",s2:"wartet auf Video v4",p:20,st:"Blocked",u:"21:50",steps:["Entwurf","Video","Dein Ja","Posten"],at:1},
-{b:"XVS Chief",t:"Board veröffentlichen",s2:"wartet auf dein Ja",p:90,st:"Blocked",u:"11:45",steps:["Daten","Board","Dein Ja","Live"],at:2},
-{b:"Reddit Meta",t:"Reddit-AI-Stimmung",s2:"Morgenlauf",p:100,st:"Done",u:"10:04",steps:["Suchen","Filtern","Zusammenfassen","Senden"],at:4},
-{b:"XVS Chief",t:"Mittags-Digest",s2:"Routine Mo–Fr 11:37",p:100,st:"Done",u:"11:45",steps:["Lesen","Bewerten","Schreiben","Senden"],at:4},
-{b:"Grok Bot",t:"Aufgaben verteilen",s2:"nächste Anfrage",p:0,st:"Queued",u:"–",steps:["Annehmen","Zuweisen","Verfolgen","Melden"],at:0}];
-const L={Running:"Läuft",Blocked:"Blockiert",Done:"Fertig",Queued:"Wartet"};let F="all",S=0;
-function draw(){tb.innerHTML=B.map((x,i)=>F!="all"&&x.st!=F?"":`<tr class="r ${i==S?"sel":""}" onclick="S=${i};draw()"><td>● ${x.b}</td><td>${x.t}<div class="s">${x.s2}</div></td><td>Adele<div class="s">${x.b=="Viral X Posts"?"X-Posts":x.b=="Reddit Meta"?"Recherche":"Projekte"}</div></td><td><span class="bar"><i style="width:${x.p}%;background:${x.st=="Done"?"#3fb950":x.st=="Blocked"?"#e3b341":"#3b82f6"}"></i></span>${x.p}%</td><td><span class="badge ${x.st}">${L[x.st]}</span></td><td class="s">${x.u}</td></tr>`).join("");
-const x=B[S];el.textContent="Zuletzt "+x.u;
-det.innerHTML=`<div class="dg"><div><h3>${x.b}: ${x.t}</h3><div class="s" style="color:#9aa3b2">${x.s2}</div><div class="ring"><svg width="110" height="110"><circle cx="55" cy="55" r="46" stroke="#262c38" stroke-width="10" fill="none"/><circle cx="55" cy="55" r="46" stroke="#3b82f6" stroke-width="10" fill="none" stroke-dasharray="${289*x.p/100} 289" transform="rotate(-90 55 55)" stroke-linecap="round"/><text x="55" y="62" fill="#fff" font-size="24" text-anchor="middle" font-weight="700">${x.p}%</text></svg><div>${L[x.st]}<br><span style="color:#9aa3b2">Schritt ${Math.min(x.at+1,4)} von 4</span></div></div><div class="steps">${x.steps.map((s,i)=>`<div class="st ${i<x.at?"d":i==x.at?"a":""}"><i></i>${s}</div>`).join("")}</div></div><div class="side"><div><span>Laufzeit</span><b>${x.st=="Done"?"00:12:40":x.st=="Queued"?"–":"00:18:42"}</b></div><div><span>Letzter Checkpoint</span><b style="font-size:16px">${x.steps[Math.max(x.at-1,0)]}</b><span>${x.u}</span></div><div><span>Wartet auf</span><b style="font-size:16px">${x.st=="Blocked"?"dein Ja":"niemanden"}</b></div></div></div>`;
+{b:"XVS Chief",t:"Heart video v4",s2:"Flight from outside into the heart",p:62,st:"Running",u:"22:14",steps:["Research","Camera path","Render","Review"],at:2},
+{b:"XVS Chief",t:"Bot dashboard",s2:"This prototype",p:80,st:"Running",u:"22:18",steps:["Read post","Draft","Feedback","Live"],at:2},
+{b:"Viral X Posts",t:"Post for heart video",s2:"waiting for video v4",p:20,st:"Blocked",u:"21:50",steps:["Draft","Video","Your OK","Post"],at:1},
+{b:"XVS Chief",t:"Publish board",s2:"waiting for your OK",p:90,st:"Blocked",u:"11:45",steps:["Data","Board","Your OK","Live"],at:2},
+{b:"Reddit Meta",t:"Reddit AI pulse",s2:"Morning run",p:100,st:"Done",u:"10:04",steps:["Search","Filter","Summarize","Send"],at:4},
+{b:"XVS Chief",t:"Noon digest",s2:"Routine Mon–Fri 11:37",p:100,st:"Done",u:"11:45",steps:["Read","Score","Write","Send"],at:4},
+{b:"Grok Bot",t:"Route tasks",s2:"next request",p:0,st:"Queued",u:"–",steps:["Accept","Assign","Track","Report"],at:0}];
+const L={Running:"Running",Blocked:"Blocked",Done:"Done",Queued:"Queued"};let F="all",S=0;
+function draw(){tb.innerHTML=B.map((x,i)=>F!="all"&&x.st!=F?"":`<tr class="r ${i==S?"sel":""}" onclick="S=${i};draw()"><td>● ${x.b}</td><td>${x.t}<div class="s">${x.s2}</div></td><td>Adele<div class="s">${x.b=="Viral X Posts"?"X posts":x.b=="Reddit Meta"?"Research":"Projects"}</div></td><td><span class="bar"><i style="width:${x.p}%;background:${x.st=="Done"?"#3fb950":x.st=="Blocked"?"#e3b341":"#3b82f6"}"></i></span>${x.p}%</td><td><span class="badge ${x.st}">${L[x.st]}</span></td><td class="s">${x.u}</td></tr>`).join("");
+const x=B[S];el.textContent="Last update "+x.u;
+det.innerHTML=`<div class="dg"><div><h3>${x.b}: ${x.t}</h3><div class="s" style="color:#9aa3b2">${x.s2}</div><div class="ring"><svg width="110" height="110"><circle cx="55" cy="55" r="46" stroke="#262c38" stroke-width="10" fill="none"/><circle cx="55" cy="55" r="46" stroke="#3b82f6" stroke-width="10" fill="none" stroke-dasharray="${289*x.p/100} 289" transform="rotate(-90 55 55)" stroke-linecap="round"/><text x="55" y="62" fill="#fff" font-size="24" text-anchor="middle" font-weight="700">${x.p}%</text></svg><div>${L[x.st]}<br><span style="color:#9aa3b2">Step ${Math.min(x.at+1,4)} of 4</span></div></div><div class="steps">${x.steps.map((s,i)=>`<div class="st ${i<x.at?"d":i==x.at?"a":""}"><i></i>${s}</div>`).join("")}</div></div><div class="side"><div><span>Elapsed time</span><b>${x.st=="Done"?"00:12:40":x.st=="Queued"?"–":"00:18:42"}</b></div><div><span>Last checkpoint</span><b style="font-size:16px">${x.steps[Math.max(x.at-1,0)]}</b><span>${x.u}</span></div><div><span>Waiting for</span><b style="font-size:16px">${x.st=="Blocked"?"your OK":"nobody"}</b></div></div></div>`;
 kA.textContent=B.filter(x=>x.st=="Running").length;kQ.textContent=B.filter(x=>x.st=="Queued").length;kD.textContent=B.filter(x=>x.st=="Done").length;kB.textContent=B.filter(x=>x.st=="Blocked").length;}
 document.querySelectorAll(".flt button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".flt button").forEach(c=>c.classList.remove("on"));b.classList.add("on");F=b.dataset.f;draw()});
-const W=[["Mo",6],["Di",9],["Mi",7],["Do",0],["Fr",0],["Sa",0],["So",0]];ch.innerHTML=W.map(([d,v])=>`<div style="height:${v*15}px"><b>${v||""}</b><span>${d}</span></div>`).join("");
-async function live(){try{const p=location.hostname.split(".")[0],r=location.pathname.split("/")[1];const fs=await (await fetch(`https://api.github.com/repos/${p}/${r}/contents/status`)).json();const d=await Promise.all(fs.filter(f=>f.name.endsWith(".json")).map(f=>fetch(f.download_url).then(x=>x.json())));if(d.length){B.length=0;d.forEach(s=>B.push({b:s.bot,t:s.task,s2:s.detail||"",p:s.progress||0,st:s.status,u:new Date(s.updated).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),steps:s.steps||["Start","Arbeit","Prüfen","Fertig"],at:s.step||0}));document.querySelector(".ex").textContent="Live";S=0;draw();}}catch(e){}}
+const W=[["Mon",6],["Tue",9],["Wed",7],["Thu",0],["Fri",0],["Sat",0],["Sun",0]];ch.innerHTML=W.map(([d,v])=>`<div style="height:${v*15}px"><b>${v||""}</b><span>${d}</span></div>`).join("");
+async function live(){try{const p=location.hostname.split(".")[0],r=location.pathname.split("/")[1];const fs=await (await fetch(`https://api.github.com/repos/${p}/${r}/contents/status`)).json();const d=await Promise.all(fs.filter(f=>f.name.endsWith(".json")).map(f=>fetch(f.download_url).then(x=>x.json())));if(d.length){B.length=0;d.forEach(s=>B.push({b:s.bot,t:s.task,s2:s.detail||"",p:s.progress||0,st:s.status,u:new Date(s.updated).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),steps:s.steps||["Start","Work","Review","Done"],at:s.step||0}));document.querySelector(".ex").textContent="Live";S=0;draw();}}catch(e){}}
 draw();live();setInterval(live,60000);
 </script></body></html>
